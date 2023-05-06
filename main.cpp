@@ -98,6 +98,19 @@ int main()
         {
             // initially we want to give the first layer (input layer) the inputs
 
+            if(layerNum == 0)
+            {
+                // create neurons
+                for(int i = 0; i <= topology[layerNum]; i++)
+                {
+                    pthread_create(&tid[i], NULL, func, NULL);
+                }
+                
+                for(int i = 0; i <= topology[layerNum]; i++)
+                {
+                    pthread_join(tid[i], NULL);
+                }
+            }
 
             // create neurons
             for(int i = 0; i <= topology[layerNum]; i++)
