@@ -33,6 +33,41 @@ void getTopology(vector<unsigned>* topology)
     }   
 }
 
+struct Connection 
+{
+    double weight;
+    double deltaWeight;
+};
+
+struct s_outputWeight
+{
+    vector<Connection> outputWeights;
+};
+
+void getInputVals(vector<double>* inputVals)
+{
+    cout << endl << "--- Taking input ---" << endl << endl;
+    cout << "0 to exit." << endl << endl;
+
+    int inputVal = 1;
+
+    while(1)
+    {
+        cout << "Enter the input value: ";
+        cin >> inputVal;
+
+        if(inputVal == 0)
+        {
+            break;
+        }
+
+        else
+        {
+            (*inputVals).push_back(inputVal);
+        }
+    }
+}
+
 void* func (void* args)
 {
     cout << "Made a neuron !" << endl;
@@ -45,6 +80,11 @@ int main()
     vector<unsigned> topology;
     getTopology(&topology);
     int numberOfLayers;
+
+    // input the values for the input layer
+    vector<double> inputVals;
+
+    getInputVals(&inputVals);
     
     // make layers
 
@@ -56,6 +96,9 @@ int main()
         // create layers
         if(fork() == 0)
         {
+            // initially we want to give the first layer (input layer) the inputs
+
+
             // create neurons
             for(int i = 0; i <= topology[layerNum]; i++)
             {
