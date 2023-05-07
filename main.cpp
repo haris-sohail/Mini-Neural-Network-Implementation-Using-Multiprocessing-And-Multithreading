@@ -50,7 +50,7 @@ struct s_outputWeight
 {
     double* outputWeights;
     Connection* weights;
-    int size, weightNo, noNeurons_next;
+    int size, weightNo, noNeurons_next, noNeurons;
 
     s_outputWeight(int numOutput)
     {
@@ -100,6 +100,8 @@ struct s_outputWeight
         for(int i = 0; i < vals.size(); i++)
         {
             outputWeights[i] = vals[i];
+
+            //cout << outputWeights[i] << endl;
         }
     }
 
@@ -147,7 +149,7 @@ void setOutput_andWrite(s_outputWeight* output, vector<double>* inputVals)
 
 void* func (void* args)
 {
-    cout << endl << "Made a neuron !" << endl;
+    //cout << endl << "Made a neuron !" << endl;
 
     sem_wait(&sem); // Acquire the semaphore
 
@@ -155,9 +157,9 @@ void* func (void* args)
 
     s_outputWeight* output = new s_outputWeight(input->noNeurons_next);
 
-    for(int j = 0; j < input->getSize(); j++)
+    for(int j = 0; j < input->noNeurons; j++)
     {
-        cout << "input->outputWeights: " << input->outputWeights[j] << endl << "input->weights[i].weight: " << input->weights[neuronNum].weight << endl; 
+        cout << "input->outputWeights: " << j << " : " << input->outputWeights[j] << endl << "input->weights[i].weight: " << input->weights[neuronNum].weight << endl; 
         output->outputWeights[neuronNum] += input->outputWeights[j] * input->weights[neuronNum].weight;
 
         cout << output->outputWeights[neuronNum] << endl;
@@ -204,6 +206,10 @@ int main()
 
     setOutput_andWrite(&output, &inputVals);
 
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+
 
     // make layers
 
@@ -221,6 +227,8 @@ int main()
 
             vector<double> inputFromFile; // holds the input 
 
+            sleep(1);
+
             readFromFile(&inputFromFile);
 
             // make input object for the thread
@@ -230,6 +238,8 @@ int main()
             input.setOutputWeights(inputFromFile);
 
             input.noNeurons_next = topology[layerNum]; // +1 not done because we are already in the next layer
+
+            input.noNeurons = topology[layerNum - 1];
 
             // now we set the weights of the neurons
 
@@ -243,6 +253,8 @@ int main()
 
             sem_init(&sem, 0, 1); // Initialize the semaphore
 
+            // object for the output for each of the thread
+
             for(int i = 0; i <= topology[layerNum]; i++)
             {
                 if(i != topology[layerNum])
@@ -255,7 +267,36 @@ int main()
             {
                 if(i != topology[layerNum])
                 {
-                    pthread_join(tid[i], NULL);
+                    void* output;
+                    pthread_join(tid[i], &output);
+
+                    // Now write the output of the thread to file
+
+                    ofstream out;
+                    if(i != 0)
+                    {
+                       out.open("output.txt", ios::app);
+                    }
+                    else
+                    {
+                        out.open("output.txt");
+                    }
+
+                    s_outputWeight* outputConverted = (s_outputWeight*) output;
+
+                    for(int j = 0; j < input.noNeurons_next; j++)
+                    {
+                        if(outputConverted->outputWeights[j] != 0)
+                        {
+                            out << outputConverted->outputWeights[j] << endl;
+
+                            //cout << outputConverted->outputWeights[j] << endl;
+                        }
+                        
+                    }
+
+                    delete outputConverted;
+
                 }
             }
 
