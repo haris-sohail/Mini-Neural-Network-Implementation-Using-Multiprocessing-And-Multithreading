@@ -6,3 +6,7 @@
 ☞ Synchronization is implemented using semaphores <br>
 ☞ Output of one process (layer) becomes the input of the second process (layer). This continues until we reach the output layer<br>
 ☞ The number of layers and threads are dynamic  <br>
+
+## TO-DO
+📝 Implement IPC <br>
+📝 Back Propagation
