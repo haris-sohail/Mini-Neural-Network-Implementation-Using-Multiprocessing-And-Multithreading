@@ -2,6 +2,10 @@
 ## SETUP
 g++ -o [object name] [.cpp file] 
 
+## DEMO
+
+Go to the drive link for the video demo: https://drive.google.com/drive/folders/1NFwF6Z-VGZzXzR6khGxVknUHu65-k6QU?usp=sharing
+
 
 ## Description
 ☞ This is an implementation of a mini neural network developed in C++ <br>
