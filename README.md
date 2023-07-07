@@ -1,4 +1,7 @@
 # Mini-Neural-Network-Implementation-Using-Multiprocessing-And-Multithreading
+## SETUP
+g++ -o [object name] [.cpp file] 
+
 
 ## Description
 ☞ This is an implementation of a mini neural network developed in C++ <br>
